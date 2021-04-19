@@ -28,7 +28,6 @@ boolean debounceButton(boolean last, int button) {
 void monitorFillButton() {
   fill_currentButton = debounceButton(fill_lastButton, FILL_BUTTON);
   if(fill_lastButton == LOW && fill_currentButton == HIGH && is_stopped) {
-    //Serial.println("FILLING...");
     is_filling = true;
     is_stopped = false;
   }
@@ -42,12 +41,11 @@ void monitorFillButton() {
 void monitorStopButton() {
   stop_currentButton = debounceButton(stop_lastButton, STOP_BUTTON);
   if(stop_lastButton == LOW && stop_currentButton == HIGH && is_filling) {
-    Serial.println("STOPPED!");
+    Serial.println("STOPPED!!");
     is_stopped = true;
     is_filling = false;
   }
   stop_lastButton = stop_currentButton;
-  //Serial.println("stopped?");
 }
 
 void loop() {
