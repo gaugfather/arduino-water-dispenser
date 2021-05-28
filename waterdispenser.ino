@@ -3,31 +3,27 @@
 #include "LiquidCrystal_I2C.h"
 LiquidCrystal_I2C lcd(0x27,2,1,0,4,5,6,7); 
 
-const boolean SERIAL_DEBUG = false;
+const boolean SERIAL_DEBUG = true;
 
 // ************************
 // * PINS
 // ************************
 const int FILL_BUTTON = 22;
 const int STOP_BUTTON = 24;
-const int ON_BUTTON = 26;
 const int SOLENOID = 35;
 
 
 // ************************
-// * BUTTON - ON - (status)
+// * ON status
 // ************************
-boolean on_lastButton = LOW;
-boolean on_currentButton = LOW;
 boolean is_on = false;
-
 unsigned long DISPLAY_TIMER = 60000; // 1 min
 unsigned long display_startTime = 0;
 unsigned long display_endTime = 0;
 
 
 // ************************
-// * BUTTON - FILL - (status)
+// * FILL BUTTON
 // ************************
 boolean fill_lastButton = LOW;
 boolean fill_currentButton = LOW;
@@ -44,7 +40,7 @@ int droplet_col_2_animation_picture = 0;
 
  
 // ************************
-// * BUTTON - STOP - (status)
+// * STOP BUTTON
 // ************************
 boolean stop_lastButton = LOW;
 boolean stop_currentButton = LOW;
@@ -52,7 +48,7 @@ boolean is_stopped = true;
 
 
 // ************************
-// * serial log messages if debug is enabled
+// * Serial log messages if debug is enabled
 // ************************
 void serialDebug(String message){
   if(SERIAL_DEBUG){
@@ -138,6 +134,7 @@ void setLcdDisplayHeader() {
 // * Turns on (brightens) LCD Display
 // ************************
 boolean turnLcdDisplayOn() {
+  serialDebug("Turning On!");
   is_on = true;
   lcd.setBacklight(HIGH);
   display_startTime = millis();
@@ -256,7 +253,7 @@ void lcdDisplayFilling_printAnimation(int column, int row, int pic) {
 void monitorFillButton() {
   fill_currentButton = debounceButton(fill_lastButton, FILL_BUTTON);
 
-  if(fill_lastButton == LOW && fill_currentButton == HIGH) { 
+  if(is_on && fill_lastButton == LOW && fill_currentButton == HIGH) { 
     is_stopped = false;
     is_filling = true;
     fill_startTime = millis();
@@ -278,12 +275,15 @@ void monitorFillButton() {
     setLcdDisplayFilling(percent);
     monitorStopButton(); 
   }
-  if(fill_lastButton == LOW && fill_currentButton == HIGH) {
+  if(is_on && fill_lastButton == LOW && fill_currentButton == HIGH) {
     setLcdDisplayStopped();
     digitalWrite(SOLENOID, LOW);
   }
   if(is_on && is_stopped && (millis() > display_endTime)) {
     turnLcdDisplayOff();
+  }
+  if(fill_lastButton == LOW && fill_currentButton == HIGH && !is_on) {
+    turnLcdDisplayOn();  
   }
   
   fill_lastButton = fill_currentButton; 
@@ -318,29 +318,17 @@ void setLcdDisplayStopped() {
 // ************************
 void monitorStopButton() {
   stop_currentButton = debounceButton(stop_lastButton, STOP_BUTTON);
-  if(stop_lastButton == LOW && stop_currentButton == HIGH && (is_filling)) {
+  if(stop_lastButton == LOW && stop_currentButton == HIGH && is_filling) {
     serialDebug("STOPPED FILLING!!");
     is_stopped = true;
     is_filling = false;
     setLcdDisplayStopped();
     digitalWrite(SOLENOID, LOW);
   }
+  if(stop_lastButton == LOW && stop_currentButton == HIGH && !is_on) {
+    turnLcdDisplayOn();  
+  }
   stop_lastButton = stop_currentButton;
-}
-
-
-// ************************
-// * Monitor Button Events
-// ************************
-void monitorButtons() {
-  on_currentButton = debounceButton(on_lastButton, ON_BUTTON);
-  if(!is_on && on_currentButton){
-    turnLcdDisplayOn();
-    on_lastButton = LOW;
-  }
-  if(is_on) {
-    monitorFillButton();
-  }
 }
 
 
@@ -360,5 +348,6 @@ void setup() {
 // * Arduino MAIN LOOP
 // ************************
 void loop() {
-  monitorButtons();
+  monitorStopButton();
+  monitorFillButton();
 }
