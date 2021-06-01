@@ -28,6 +28,7 @@ unsigned long display_endTime = 0;
 boolean fill_lastButton = LOW;
 boolean fill_currentButton = LOW;
 boolean is_filling = false;
+String randomKid = "";
 
 unsigned long AUTO_FILL_TIME = 152000; // 2 min 32 sec
 unsigned long fill_startTime = 0;
@@ -172,7 +173,7 @@ boolean debounceButton(boolean last, int button) {
 // ************************
 void setLcdDisplayFilling(int percent) {
   lcd.setCursor(0,2);
-  lcd.print("drinking gaug-ter");
+  lcd.print("drinking " + randomKid);
   lcd.setCursor(2,3);
   lcd.write(byte(0));
   lcd.write(byte(0));
@@ -259,11 +260,11 @@ void monitorFillButton() {
     fill_startTime = millis();
 
     serialDebug("FILLING WATER...");
+    randomKid = random(2) ? "liam" : "haddie";  
     digitalWrite(SOLENOID, HIGH);
   }
   while(is_filling && !is_stopped && ((millis() - fill_startTime) <= AUTO_FILL_TIME)) {
-    serialDebug("AUTO-FILLING (" + String((millis() - fill_startTime) / 1000) + " seconds of " + String((AUTO_FILL_TIME / 1000)) + " seconds)");
-    
+    serialDebug("AUTO-FILLING (" + String((millis() - fill_startTime) / 1000) + " seconds of " + String((AUTO_FILL_TIME / 1000)) + " seconds)");    
     double startTime = (millis() - fill_startTime) / 1000 / (AUTO_FILL_TIME / 1000);
     double num1 = (millis() - fill_startTime) / 1000;
     double num2 = AUTO_FILL_TIME / 1000;
