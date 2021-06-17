@@ -542,6 +542,7 @@ void monitorFillButton() {
   if(is_on && fill_lastButton == LOW && fill_currentButton == HIGH) {
     setLcdDisplayStopped();
     digitalWrite(SOLENOID, LOW);
+    playGameOfThronesTheme(false);
   }
   if(is_on && is_stopped && (millis() > display_endTime)) {
     turnLcdDisplayOff();
@@ -699,13 +700,11 @@ void monitorStopButton() {
 void monitorSongButton() {
   song_currentButton = debounceButton(song_lastButton, SONG_BUTTON);
   if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 0 && !is_got_playing) {
-    serialDebug("BOTH BUTTON PRESS - PLAY GOT!!");
     turnLcdDisplayOn();
     playGameOfThronesTheme(true);
     song = 1;
   }
   if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 1 && !is_mario_playing) {
-    serialDebug("BOTH BUTTON PRESS - PLAY GOT!!");
     turnLcdDisplayOn();
     playSuperMario();
     song = 0;
