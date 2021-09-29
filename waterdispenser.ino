@@ -3,259 +3,11 @@
 #include "LiquidCrystal_I2C.h"
 LiquidCrystal_I2C lcd(0x27,2,1,0,4,5,6,7); 
 
+#include "music_melodies.h"
+
 const boolean SERIAL_DEBUG = true;
 
 
-// ************************
-// * SOUNDS
-// ************************
-#define NOTE_B0  31
-#define NOTE_C1  33
-#define NOTE_CS1 35
-#define NOTE_D1  37
-#define NOTE_DS1 39
-#define NOTE_E1  41
-#define NOTE_F1  44
-#define NOTE_FS1 46
-#define NOTE_G1  49
-#define NOTE_GS1 52
-#define NOTE_A1  55
-#define NOTE_AS1 58
-#define NOTE_B1  62
-#define NOTE_C2  65
-#define NOTE_CS2 69
-#define NOTE_D2  73
-#define NOTE_DS2 78
-#define NOTE_E2  82
-#define NOTE_F2  87
-#define NOTE_FS2 93
-#define NOTE_G2  98
-#define NOTE_GS2 104
-#define NOTE_A2  110
-#define NOTE_AS2 117
-#define NOTE_B2  123
-#define NOTE_C3  131
-#define NOTE_CS3 139
-#define NOTE_D3  147
-#define NOTE_DS3 156
-#define NOTE_E3  165
-#define NOTE_F3  175
-#define NOTE_FS3 185
-#define NOTE_G3  196
-#define NOTE_GS3 208
-#define NOTE_A3  220
-#define NOTE_AS3 233
-#define NOTE_B3  247
-#define NOTE_C4  262
-#define NOTE_CS4 277
-#define NOTE_D4  294
-#define NOTE_DS4 311
-#define NOTE_E4  330
-#define NOTE_F4  349
-#define NOTE_FS4 370
-#define NOTE_G4  392
-#define NOTE_GS4 415
-#define NOTE_A4  440
-#define NOTE_AS4 466
-#define NOTE_B4  494
-#define NOTE_C5  523
-#define NOTE_CS5 554
-#define NOTE_D5  587
-#define NOTE_DS5 622
-#define NOTE_E5  659
-#define NOTE_F5  698
-#define NOTE_FS5 740
-#define NOTE_G5  784
-#define NOTE_GS5 831
-#define NOTE_A5  880
-#define NOTE_AS5 932
-#define NOTE_B5  988
-#define NOTE_C6  1047
-#define NOTE_CS6 1109
-#define NOTE_D6  1175
-#define NOTE_DS6 1245
-#define NOTE_E6  1319
-#define NOTE_F6  1397
-#define NOTE_FS6 1480
-#define NOTE_G6  1568
-#define NOTE_GS6 1661
-#define NOTE_A6  1760
-#define NOTE_AS6 1865
-#define NOTE_B6  1976
-#define NOTE_C7  2093
-#define NOTE_CS7 2217
-#define NOTE_D7  2349
-#define NOTE_DS7 2489
-#define NOTE_E7  2637
-#define NOTE_F7  2794
-#define NOTE_FS7 2960
-#define NOTE_G7  3136
-#define NOTE_GS7 3322
-#define NOTE_A7  3520
-#define NOTE_AS7 3729
-#define NOTE_B7  3951
-#define NOTE_C8  4186
-#define NOTE_CS8 4435
-#define NOTE_D8  4699
-#define NOTE_DS8 4978
-#define REST      0
-
-
-// change this to whichever pin you want to use
-int buzzer = 41;
-
-// notes of the moledy followed by the duration.
-// a 4 means a quarter note, 8 an eighteenth , 16 sixteenth, so on
-// !!negative numbers are used to represent dotted notes,
-// so -4 means a dotted quarter note, that is, a quarter plus an eighteenth!!
-int gotMelody[] = {
-
-  // Game of Thrones
-  // Score available at https://musescore.com/user/8407786/scores/2156716
-
-  NOTE_G4,8, NOTE_C4,8, NOTE_DS4,16, NOTE_F4,16, NOTE_G4,8, NOTE_C4,8, NOTE_DS4,16, NOTE_F4,16, //1
-  NOTE_G4,8, NOTE_C4,8, NOTE_DS4,16, NOTE_F4,16, NOTE_G4,8, NOTE_C4,8, NOTE_DS4,16, NOTE_F4,16,
-  NOTE_G4,8, NOTE_C4,8, NOTE_E4,16, NOTE_F4,16, NOTE_G4,8, NOTE_C4,8, NOTE_E4,16, NOTE_F4,16,
-  NOTE_G4,8, NOTE_C4,8, NOTE_E4,16, NOTE_F4,16, NOTE_G4,8, NOTE_C4,8, NOTE_E4,16, NOTE_F4,16,
-  NOTE_G4,-4, NOTE_C4,-4,//5
-
-  NOTE_DS4,16, NOTE_F4,16, NOTE_G4,4, NOTE_C4,4, NOTE_DS4,16, NOTE_F4,16, //6
-  NOTE_D4,-1, //7 and 8
-  NOTE_F4,-4, NOTE_AS3,-4,
-  NOTE_DS4,16, NOTE_D4,16, NOTE_F4,4, NOTE_AS3,-4,
-  NOTE_DS4,16, NOTE_D4,16, NOTE_C4,-1, //11 and 12
-
-  //repeats from 5
-  NOTE_G4,-4, NOTE_C4,-4,//5
-
-  NOTE_DS4,16, NOTE_F4,16, NOTE_G4,4, NOTE_C4,4, NOTE_DS4,16, NOTE_F4,16, //6
-  NOTE_D4,-1, //7 and 8
-  NOTE_F4,-4, NOTE_AS3,-4,
-  NOTE_DS4,16, NOTE_D4,16, NOTE_F4,4, NOTE_AS3,-4,
-  NOTE_DS4,16, NOTE_D4,16, NOTE_C4,-1, //11 and 12
-  NOTE_G4,-4, NOTE_C4,-4,
-  NOTE_DS4,16, NOTE_F4,16, NOTE_G4,4,  NOTE_C4,4, NOTE_DS4,16, NOTE_F4,16,
-
-  NOTE_D4,-2,//15
-  NOTE_F4,-4, NOTE_AS3,-4,
-  NOTE_D4,-8, NOTE_DS4,-8, NOTE_D4,-8, NOTE_AS3,-8,
-  NOTE_C4,-1,
-  NOTE_C5,-2,
-  NOTE_AS4,-2,
-  NOTE_C4,-2,
-  NOTE_G4,-2,
-  NOTE_DS4,-2,
-  NOTE_DS4,-4, NOTE_F4,-4, 
-  NOTE_G4,-1,
-  
-  NOTE_C5,-2,//28
-  NOTE_AS4,-2,
-  NOTE_C4,-2,
-  NOTE_G4,-2, 
-  NOTE_DS4,-2,
-  NOTE_DS4,-4, NOTE_D4,-4,
-  NOTE_C5,8, NOTE_G4,8, NOTE_GS4,16, NOTE_AS4,16, NOTE_C5,8, NOTE_G4,8, NOTE_GS4,16, NOTE_AS4,16,
-  NOTE_C5,8, NOTE_G4,8, NOTE_GS4,16, NOTE_AS4,16, NOTE_C5,8, NOTE_G4,8, NOTE_GS4,16, NOTE_AS4,16,
-  
-  REST,4, NOTE_GS5,16, NOTE_AS5,16, NOTE_C6,8, NOTE_G5,8, NOTE_GS5,16, NOTE_AS5,16,
-  NOTE_C6,8, NOTE_G5,16, NOTE_GS5,16, NOTE_AS5,16, NOTE_C6,8, NOTE_G5,8, NOTE_GS5,16, NOTE_AS5,16,  
-};
-
-// notes of the moledy followed by the duration.
-// a 4 means a quarter note, 8 an eighteenth , 16 sixteenth, so on
-// !!negative numbers are used to represent dotted notes,
-// so -4 means a dotted quarter note, that is, a quarter plus an eighteenth!!
-int superMarioMelody[] = {
-
-  // Super Mario Bros theme
-  // Score available at https://musescore.com/user/2123/scores/2145
-  // Theme by Koji Kondo
-  
-  
-  NOTE_E5,8, NOTE_E5,8, REST,8, NOTE_E5,8, REST,8, NOTE_C5,8, NOTE_E5,8, //1
-  NOTE_G5,4, REST,4, NOTE_G4,8, REST,4, 
-  NOTE_C5,-4, NOTE_G4,8, REST,4, NOTE_E4,-4, // 3
-  NOTE_A4,4, NOTE_B4,4, NOTE_AS4,8, NOTE_A4,4,
-  NOTE_G4,-8, NOTE_E5,-8, NOTE_G5,-8, NOTE_A5,4, NOTE_F5,8, NOTE_G5,8,
-  REST,8, NOTE_E5,4,NOTE_C5,8, NOTE_D5,8, NOTE_B4,-4,
-  NOTE_C5,-4, NOTE_G4,8, REST,4, NOTE_E4,-4, // repeats from 3
-  NOTE_A4,4, NOTE_B4,4, NOTE_AS4,8, NOTE_A4,4,
-  NOTE_G4,-8, NOTE_E5,-8, NOTE_G5,-8, NOTE_A5,4, NOTE_F5,8, NOTE_G5,8,
-  REST,8, NOTE_E5,4,NOTE_C5,8, NOTE_D5,8, NOTE_B4,-4,
-
-  
-  REST,4, NOTE_G5,8, NOTE_FS5,8, NOTE_F5,8, NOTE_DS5,4, NOTE_E5,8,//7
-  REST,8, NOTE_GS4,8, NOTE_A4,8, NOTE_C4,8, REST,8, NOTE_A4,8, NOTE_C5,8, NOTE_D5,8,
-  REST,4, NOTE_DS5,4, REST,8, NOTE_D5,-4,
-  NOTE_C5,2, REST,2,
-
-  REST,4, NOTE_G5,8, NOTE_FS5,8, NOTE_F5,8, NOTE_DS5,4, NOTE_E5,8,//repeats from 7
-  REST,8, NOTE_GS4,8, NOTE_A4,8, NOTE_C4,8, REST,8, NOTE_A4,8, NOTE_C5,8, NOTE_D5,8,
-  REST,4, NOTE_DS5,4, REST,8, NOTE_D5,-4,
-  NOTE_C5,2, REST,2,
-
-  NOTE_C5,8, NOTE_C5,4, NOTE_C5,8, REST,8, NOTE_C5,8, NOTE_D5,4,//11
-  NOTE_E5,8, NOTE_C5,4, NOTE_A4,8, NOTE_G4,2,
-
-  NOTE_C5,8, NOTE_C5,4, NOTE_C5,8, REST,8, NOTE_C5,8, NOTE_D5,8, NOTE_E5,8,//13
-  REST,1, 
-  NOTE_C5,8, NOTE_C5,4, NOTE_C5,8, REST,8, NOTE_C5,8, NOTE_D5,4,
-  NOTE_E5,8, NOTE_C5,4, NOTE_A4,8, NOTE_G4,2,
-  NOTE_E5,8, NOTE_E5,8, REST,8, NOTE_E5,8, REST,8, NOTE_C5,8, NOTE_E5,4,
-  NOTE_G5,4, REST,4, NOTE_G4,4, REST,4, 
-  NOTE_C5,-4, NOTE_G4,8, REST,4, NOTE_E4,-4, // 19
-  
-  NOTE_A4,4, NOTE_B4,4, NOTE_AS4,8, NOTE_A4,4,
-  NOTE_G4,-8, NOTE_E5,-8, NOTE_G5,-8, NOTE_A5,4, NOTE_F5,8, NOTE_G5,8,
-  REST,8, NOTE_E5,4, NOTE_C5,8, NOTE_D5,8, NOTE_B4,-4,
-
-  NOTE_C5,-4, NOTE_G4,8, REST,4, NOTE_E4,-4, // repeats from 19
-  NOTE_A4,4, NOTE_B4,4, NOTE_AS4,8, NOTE_A4,4,
-  NOTE_G4,-8, NOTE_E5,-8, NOTE_G5,-8, NOTE_A5,4, NOTE_F5,8, NOTE_G5,8,
-  REST,8, NOTE_E5,4, NOTE_C5,8, NOTE_D5,8, NOTE_B4,-4,
-
-  NOTE_E5,8, NOTE_C5,4, NOTE_G4,8, REST,4, NOTE_GS4,4,//23
-  NOTE_A4,8, NOTE_F5,4, NOTE_F5,8, NOTE_A4,2,
-  NOTE_D5,-8, NOTE_A5,-8, NOTE_A5,-8, NOTE_A5,-8, NOTE_G5,-8, NOTE_F5,-8,
-  
-  NOTE_E5,8, NOTE_C5,4, NOTE_A4,8, NOTE_G4,2, //26
-  NOTE_E5,8, NOTE_C5,4, NOTE_G4,8, REST,4, NOTE_GS4,4,
-  NOTE_A4,8, NOTE_F5,4, NOTE_F5,8, NOTE_A4,2,
-  NOTE_B4,8, NOTE_F5,4, NOTE_F5,8, NOTE_F5,-8, NOTE_E5,-8, NOTE_D5,-8,
-  NOTE_C5,8, NOTE_E4,4, NOTE_E4,8, NOTE_C4,2,
-
-  NOTE_E5,8, NOTE_C5,4, NOTE_G4,8, REST,4, NOTE_GS4,4,//repeats from 23
-  NOTE_A4,8, NOTE_F5,4, NOTE_F5,8, NOTE_A4,2,
-  NOTE_D5,-8, NOTE_A5,-8, NOTE_A5,-8, NOTE_A5,-8, NOTE_G5,-8, NOTE_F5,-8,
-  
-  NOTE_E5,8, NOTE_C5,4, NOTE_A4,8, NOTE_G4,2, //26
-  NOTE_E5,8, NOTE_C5,4, NOTE_G4,8, REST,4, NOTE_GS4,4,
-  NOTE_A4,8, NOTE_F5,4, NOTE_F5,8, NOTE_A4,2,
-  NOTE_B4,8, NOTE_F5,4, NOTE_F5,8, NOTE_F5,-8, NOTE_E5,-8, NOTE_D5,-8,
-  NOTE_C5,8, NOTE_E4,4, NOTE_E4,8, NOTE_C4,2,
-  NOTE_C5,8, NOTE_C5,4, NOTE_C5,8, REST,8, NOTE_C5,8, NOTE_D5,8, NOTE_E5,8,
-  REST,1,
-
-  NOTE_C5,8, NOTE_C5,4, NOTE_C5,8, REST,8, NOTE_C5,8, NOTE_D5,4, //33
-  NOTE_E5,8, NOTE_C5,4, NOTE_A4,8, NOTE_G4,2,
-  NOTE_E5,8, NOTE_E5,8, REST,8, NOTE_E5,8, REST,8, NOTE_C5,8, NOTE_E5,4,
-  NOTE_G5,4, REST,4, NOTE_G4,4, REST,4, 
-  NOTE_E5,8, NOTE_C5,4, NOTE_G4,8, REST,4, NOTE_GS4,4,
-  NOTE_A4,8, NOTE_F5,4, NOTE_F5,8, NOTE_A4,2,
-  NOTE_D5,-8, NOTE_A5,-8, NOTE_A5,-8, NOTE_A5,-8, NOTE_G5,-8, NOTE_F5,-8,
-  
-  NOTE_E5,8, NOTE_C5,4, NOTE_A4,8, NOTE_G4,2, //40
-  NOTE_E5,8, NOTE_C5,4, NOTE_G4,8, REST,4, NOTE_GS4,4,
-  NOTE_A4,8, NOTE_F5,4, NOTE_F5,8, NOTE_A4,2,
-  NOTE_B4,8, NOTE_F5,4, NOTE_F5,8, NOTE_F5,-8, NOTE_E5,-8, NOTE_D5,-8,
-  NOTE_C5,8, NOTE_E4,4, NOTE_E4,8, NOTE_C4,2,
-  
-  //game over sound
-  NOTE_C5,-4, NOTE_G4,-4, NOTE_E4,4, //45
-  NOTE_A4,-8, NOTE_B4,-8, NOTE_A4,-8, NOTE_GS4,-8, NOTE_AS4,-8, NOTE_GS4,-8,
-  NOTE_G4,8, NOTE_D4,8, NOTE_E4,-2,  
-
-};
 
 
 
@@ -284,9 +36,11 @@ unsigned long display_endTime = 0;
 boolean fill_lastButton = LOW;
 boolean fill_currentButton = LOW;
 boolean is_filling = false;
+boolean is_filling_coffee = false;
 String randomKid = "";
 
-unsigned long AUTO_FILL_TIME = 152000; // 2 min 32 sec
+unsigned long AUTO_FILL_TIME = 153000; // (gallon) 2 min 33 sec
+unsigned long COFFEE_FILL_TIME = 121000; // (quart) 1 min 30 sec
 unsigned long fill_startTime = 0;
 
 int droplet_col_1_animation_row = 0;
@@ -311,6 +65,9 @@ boolean song_lastButton = LOW;
 boolean song_currentButton = LOW;
 boolean is_got_playing = false;
 boolean is_mario_playing = false;
+boolean is_lion_sleeps_tonight_playing = false;
+boolean is_take_on_me_playing = false;
+boolean is_never_gonna_give_playing = false;
 int song = 0;
 
 
@@ -376,6 +133,30 @@ void setupLcdDisplay() {
   };
   lcd.createChar(3, alien);
 
+  byte speaker[8] = {
+      0b00001,
+      0b00011,
+      0b01111,
+      0b01111,
+      0b01111,
+      0b00011,
+      0b00001,
+      0b00000
+  };
+  lcd.createChar(4, speaker);
+
+  byte sound[8] = {
+      0b00001,
+      0b00011,
+      0b00101,
+      0b01001,
+      0b01001,
+      0b01011,
+      0b11011,
+      0b11000
+  };
+  lcd.createChar(5, sound);
+
   setLcdDisplayHeader();   
 }
 
@@ -424,7 +205,7 @@ boolean turnLcdDisplayOff() {
 boolean debounceButton(boolean last, int button) {
   boolean current = digitalRead(button);
   if(last != current) {
-    delay(5); // 5 ms
+    delay(4);
     current = digitalRead(button);
   }
   return current;
@@ -434,9 +215,13 @@ boolean debounceButton(boolean last, int button) {
 // ************************
 // * LCD display Filling
 // ************************
-void setLcdDisplayFilling(int percent) {
+void setLcdDisplayFilling(int percent, boolean is_auto) {
   lcd.setCursor(0,2);
-  lcd.print("drinking " + randomKid);
+  if(is_auto) {
+    lcd.print("drinking " + randomKid);
+  } else {
+    lcd.print("coffee 4 " + randomKid);
+  }
   lcd.setCursor(2,3);
   lcd.write(byte(0));
   lcd.write(byte(0));
@@ -512,6 +297,27 @@ void lcdDisplayFilling_printAnimation(int column, int row, int pic) {
 
 
 // ************************
+// * Display fill container percentage
+// ************************
+void showFillContainerPercentage(String type, unsigned long fill_time) {
+  serialDebug(String(type) + " (" + String((millis() - fill_startTime) / 1000) + " seconds of " + String((fill_time / 1000)) + " seconds)");    
+  double startTime = (millis() - fill_startTime) / 1000 / (fill_time / 1000);
+  double num1 = (millis() - fill_startTime) / 1000;
+  double num2 = fill_time / 1000;
+  double num3 = (num1 / num2) * 100;
+  int fillPercent = (millis() - fill_startTime) / 1000 / ( fill_time / 1000);
+  int percent = round(num3);
+  serialDebug(String(type) + " PERCENT = " + String(fillPercent) + "%");
+
+  boolean auto_fill = true;
+  if(type == "COFFEE-FILL") {
+    auto_fill = false;
+  }
+  setLcdDisplayFilling(percent, auto_fill);
+}
+
+
+// ************************
 // * Monitors Fill Button Press
 // ************************
 void monitorFillButton() {
@@ -527,22 +333,15 @@ void monitorFillButton() {
     digitalWrite(SOLENOID, HIGH);
   }
   while(is_filling && !is_stopped && ((millis() - fill_startTime) <= AUTO_FILL_TIME)) {
-    serialDebug("AUTO-FILLING (" + String((millis() - fill_startTime) / 1000) + " seconds of " + String((AUTO_FILL_TIME / 1000)) + " seconds)");    
-    double startTime = (millis() - fill_startTime) / 1000 / (AUTO_FILL_TIME / 1000);
-    double num1 = (millis() - fill_startTime) / 1000;
-    double num2 = AUTO_FILL_TIME / 1000;
-    double num3 = (num1 / num2) * 100;
-    int fillPercent = (millis() - fill_startTime) / 1000 / ( AUTO_FILL_TIME / 1000);
-    int percent = round(num3);
-    serialDebug("FILL PERCENT = " + String(fillPercent) + "%");
+    showFillContainerPercentage("AUTO-FILL", AUTO_FILL_TIME);
     
-    setLcdDisplayFilling(percent);
     monitorStopButton(); 
+    monitorSongButton();
   }
   if(is_on && fill_lastButton == LOW && fill_currentButton == HIGH) {
     setLcdDisplayStopped();
     digitalWrite(SOLENOID, LOW);
-    playGameOfThronesTheme(false);
+    playMelody(0, false);
   }
   if(is_on && is_stopped && (millis() > display_endTime)) {
     turnLcdDisplayOff();
@@ -579,93 +378,105 @@ void setLcdDisplayStopped() {
 
 
 // ************************
-// * Play Buzzer Super Mario
+// * Display Music Track
 // ************************
-void playSuperMario() {
-  // change this to make the song slower or faster
-  int tempo = 200;
-  // this calculates the duration of a whole note in ms
-  int wholenote = (60000 * 4) / tempo;
-
-  int divider = 0, noteDuration = 0;
-  // sizeof gives the number of bytes, each int value is composed of two bytes (16 bits)
-  // there are two values per note (pitch and duration), so for each note there are four bytes
-  int notes = sizeof(superMarioMelody) / sizeof(superMarioMelody[0]) / 2;
-
-  is_mario_playing = true;
-
-  for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
-
-    monitorStopButton();
-    if(!is_mario_playing) {
+void setLcdDisplayMusicPlaying(int music_track) {
+  serialDebug("Displaying Music Track: " + String(music_track));
+  String song;
+  switch(music_track) {
+    case 0:
+      song = "Game of Thrones ";
       break;
-    }
-    // calculates the duration of each note
-    divider = superMarioMelody[thisNote + 1];
-    if (divider > 0) {
-      // regular note, just proceed
-      noteDuration = (wholenote) / divider;
-    } else if (divider < 0) {
-      // dotted notes are represented with negative durations!!
-      noteDuration = (wholenote) / abs(divider);
-      noteDuration *= 1.5; // increases the duration in half for dotted notes
-    }
-
-    // we only play the note for 90% of the duration, leaving 10% as a pause
-    tone(buzzer, superMarioMelody[thisNote], noteDuration * 0.9);
-
-    // Wait for the specief duration before playing the next note.
-    delay(noteDuration);
-
-    // stop the waveform generation before the next note.
-    noTone(buzzer);
+    case 1:
+      song = "Super Mario Bro.";
+      break;
+    case 2:
+      song = "Lion Sleeps Ton.";
+      break;
+    case 3:
+      song = "  Take on Me    ";
+      break;
+    case 4:
+      song = "Never Gonna Give";
+      break;
   }
+  lcd.setCursor(1,2);
+  lcd.write(byte(4));
+  lcd.print("   dancing to  ");
+  lcd.setCursor(18,2);
+  lcd.write(byte(5));
+  lcd.setCursor(1,3);
+  lcd.print(song);
 }
 
-// ************************
-// * Play Buzzer Game of Thrones Theme
-// ************************
-void playGameOfThronesTheme(boolean fullSong) {
 
-  // change this to make the song slower or faster
-  int tempo = 85;
-  // this calculates the duration of a whole note in ms
-  int wholenote = (60000 * 4) / tempo;
-
-  int divider = 0, noteDuration = 0;
-  // sizeof gives the number of bytes, each int value is composed of two bytes (16 bits)
-  // there are two values per note (pitch and duration), so for each note there are four bytes
-  int notes = sizeof(gotMelody) / sizeof(gotMelody[0]) / 2;
-  if(!fullSong) {
+// ************************
+// * Play a Music Melody
+// ************************
+void playMelody(int music_track, boolean full_song) {
+  int tempo;
+  int notes;
+  int* melody;
+  setLcdDisplayMusicPlaying(music_track);
+  switch(music_track) {
+    case 0:
+      tempo = 85;
+      melody = gotMelody;
+      notes = sizeof(gotMelody) / sizeof(gotMelody[0]) / 2;
+      break;
+    case 1:
+      tempo = 200;
+      melody = superMarioMelody;
+      notes = sizeof(superMarioMelody) / sizeof(superMarioMelody[0]) / 2;
+      break;
+    case 2: 
+      tempo = 122;
+      melody = lionSleepsTonightMelody;
+      notes = sizeof(lionSleepsTonightMelody) / sizeof(lionSleepsTonightMelody[0]) / 2;
+      break;
+    case 3: 
+      tempo = 140;
+      melody = takeOnMeMelody;
+      notes = sizeof(takeOnMeMelody) / sizeof(takeOnMeMelody[0]) / 2;
+      break;
+    case 4: 
+      tempo = 144;
+      melody = neverGonnaGiveYouUpMelody;
+      notes = sizeof(neverGonnaGiveYouUpMelody) / sizeof(neverGonnaGiveYouUpMelody[0]) / 2;
+      break;
+  }
+  if(!full_song) {
     notes = 6;
   }
-  is_got_playing = true;
-    
+  int wholenote = (60000 * 4) / tempo;
+  int divider = 0, noteDuration = 0;
+  
   for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
-    serialDebug("Playing note=" + String(thisNote));
     monitorStopButton();
-    if(!is_got_playing) {
+    boolean break_loop = false;
+    if((!is_got_playing && music_track == 0) || 
+      (!is_mario_playing && music_track == 1) || 
+      (!is_lion_sleeps_tonight_playing && music_track == 2) ||
+      (!is_take_on_me_playing && music_track == 3) ||
+      (!is_never_gonna_give_playing && music_track == 4)
+      ) {
       break;
     }
-
-    // calculates the duration of each note
-    divider = gotMelody[thisNote + 1];
+    divider = melody[thisNote + 1];
     if (divider > 0) {
-      // regular note, just proceed
       noteDuration = (wholenote) / divider;
     } else if (divider < 0) {
-      // dotted notes are represented with negative durations!!
       noteDuration = (wholenote) / abs(divider);
-      noteDuration *= 1.5; // increases the duration in half for dotted notes
+      noteDuration *= 1.5;
     }
-    // we only play the note for 90% of the duration, leaving 10% as a pause
-    tone(buzzer, gotMelody[thisNote], noteDuration * 0.9);
-    // Wait for the duration before playing the next note.
+
+    tone(buzzer, melody[thisNote], noteDuration * 0.9);
+
     delay(noteDuration);
-    // stop the waveform generation before the next note.
+
     noTone(buzzer);
   }
-  is_got_playing = false;
+  
 }
 
 
@@ -674,40 +485,85 @@ void playGameOfThronesTheme(boolean fullSong) {
 // ************************
 void monitorStopButton() {
   stop_currentButton = debounceButton(stop_lastButton, STOP_BUTTON);
+  if(stop_currentButton == HIGH) {
+    serialDebug("stop pressed");
+  }
   if(stop_lastButton == LOW && stop_currentButton == HIGH && is_filling) {
     serialDebug("STOPPED FILLING!!");
     is_stopped = true;
     is_filling = false;
     setLcdDisplayStopped();
     digitalWrite(SOLENOID, LOW);
-    playGameOfThronesTheme(false);
+    playMelody(0, false);
   }
   if(stop_lastButton == LOW && stop_currentButton == HIGH && !is_on) {
     turnLcdDisplayOn();  
   }
-  if(stop_lastButton == LOW && stop_currentButton == HIGH && is_got_playing) {
-    is_got_playing = false;
-  }
-  if(stop_lastButton == LOW && stop_currentButton == HIGH && is_mario_playing) {
-    is_mario_playing = false;
+  if(stop_lastButton == LOW && stop_currentButton == HIGH) {
+    if(is_got_playing) {
+      is_got_playing = false;
+    }
+    if(is_mario_playing) {
+      is_mario_playing = false;
+    }
+    if(is_lion_sleeps_tonight_playing) {
+      is_lion_sleeps_tonight_playing = false;
+    }
+    if(is_take_on_me_playing) {
+      is_take_on_me_playing = false;
+    }
+    if(is_never_gonna_give_playing) {
+      is_never_gonna_give_playing = false;
+    }
   }
   stop_lastButton = stop_currentButton;
 }
 
 // ************************
-// * Monitors Song Button Press
+// * Monitors Song Button Press or Coffee Container Button Press
 // ************************
 void monitorSongButton() {
   song_currentButton = debounceButton(song_lastButton, SONG_BUTTON);
   if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 0 && !is_got_playing) {
+    is_got_playing = true;
     turnLcdDisplayOn();
-    playGameOfThronesTheme(true);
+    playMelody(0, true);
     song = 1;
   }
-  if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 1 && !is_mario_playing) {
+  if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 1 && !is_got_playing && !is_mario_playing) {
+    is_mario_playing = true;
     turnLcdDisplayOn();
-    playSuperMario();
-    song = 0;
+    playMelody(1, true);  // play super mario bros
+    song = 2;
+  }
+  if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 2 && !is_mario_playing && !is_lion_sleeps_tonight_playing) {
+    is_lion_sleeps_tonight_playing = true;
+    turnLcdDisplayOn();
+    playMelody(2, true);  // play lion sleeps tonight
+    song = 3;
+  }
+  if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 3 && !is_lion_sleeps_tonight_playing && !is_take_on_me_playing) {
+    is_take_on_me_playing = true;
+    turnLcdDisplayOn();
+    playMelody(3, true);  // play take on me
+    song = 4;
+  }
+  if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 4 && !is_take_on_me_playing && !is_never_gonna_give_playing) {
+    is_never_gonna_give_playing = true;
+    turnLcdDisplayOn();
+    playMelody(4, true);  // play never gonna give
+    song = 0; //reset
+  }
+  if(song_lastButton == LOW && song_currentButton == HIGH && is_filling && !is_filling_coffee) {
+    // Fill Coffee Container
+    is_filling_coffee = true;
+    while(is_filling && !is_stopped && is_filling_coffee && ((millis() - fill_startTime) <= COFFEE_FILL_TIME)) {
+      showFillContainerPercentage("COFFEE-FILL", COFFEE_FILL_TIME);
+      
+      monitorStopButton(); 
+    }
+    is_filling_coffee = false;
+    fill_startTime = AUTO_FILL_TIME;
   }
   song_lastButton = song_currentButton;
 }
