@@ -5,10 +5,7 @@ LiquidCrystal_I2C lcd(0x27,2,1,0,4,5,6,7);
 
 #include "music_melodies.h"
 
-const boolean SERIAL_DEBUG = true;
-
-
-
+const boolean SERIAL_DEBUG = false;
 
 
 
@@ -218,9 +215,9 @@ boolean debounceButton(boolean last, int button) {
 void setLcdDisplayFilling(int percent, boolean is_auto) {
   lcd.setCursor(0,2);
   if(is_auto) {
-    lcd.print("drinking " + randomKid);
+    lcd.print("Water 4 " + randomKid);
   } else {
-    lcd.print("coffee 4 " + randomKid);
+    lcd.print("Coffee 4 " + randomKid);
   }
   lcd.setCursor(2,3);
   lcd.write(byte(0));
@@ -341,7 +338,9 @@ void monitorFillButton() {
   if(is_on && fill_lastButton == LOW && fill_currentButton == HIGH) {
     setLcdDisplayStopped();
     digitalWrite(SOLENOID, LOW);
+    is_got_playing = true;
     playMelody(0, false);
+    is_got_playing = false;
   }
   if(is_on && is_stopped && (millis() > display_endTime)) {
     turnLcdDisplayOff();
@@ -367,7 +366,7 @@ void setLcdDisplayStopped() {
   lcdDisplayFilling_clearAnimation(19, 4);
 
   lcd.setCursor(0,2);
-  lcd.print("    stopped!     ");  
+  lcd.print("    stopped!      ");  
   lcd.setCursor(0,3);
   lcd.print("      |");
   lcd.write(byte(2));
@@ -417,7 +416,9 @@ void playMelody(int music_track, boolean full_song) {
   int tempo;
   int notes;
   int* melody;
-  setLcdDisplayMusicPlaying(music_track);
+  if(full_song) {
+    setLcdDisplayMusicPlaying(music_track); 
+  }
   switch(music_track) {
     case 0:
       tempo = 85;
@@ -460,7 +461,7 @@ void playMelody(int music_track, boolean full_song) {
       (!is_take_on_me_playing && music_track == 3) ||
       (!is_never_gonna_give_playing && music_track == 4)
       ) {
-      break;
+        break;
     }
     divider = melody[thisNote + 1];
     if (divider > 0) {
@@ -476,7 +477,7 @@ void playMelody(int music_track, boolean full_song) {
 
     noTone(buzzer);
   }
-  
+  setLcdDisplayStopped();
 }
 
 
@@ -485,16 +486,15 @@ void playMelody(int music_track, boolean full_song) {
 // ************************
 void monitorStopButton() {
   stop_currentButton = debounceButton(stop_lastButton, STOP_BUTTON);
-  if(stop_currentButton == HIGH) {
-    serialDebug("stop pressed");
-  }
   if(stop_lastButton == LOW && stop_currentButton == HIGH && is_filling) {
     serialDebug("STOPPED FILLING!!");
     is_stopped = true;
     is_filling = false;
     setLcdDisplayStopped();
     digitalWrite(SOLENOID, LOW);
+    is_got_playing = true;
     playMelody(0, false);
+    is_got_playing = false;
   }
   if(stop_lastButton == LOW && stop_currentButton == HIGH && !is_on) {
     turnLcdDisplayOn();  
@@ -519,51 +519,59 @@ void monitorStopButton() {
   stop_lastButton = stop_currentButton;
 }
 
+
+// ************************
+// * Play next song
+// ************************
+void playNextSong() {
+  if(song == 0 && !is_got_playing) {
+      is_got_playing = true;
+      playMelody(0, true); // play game of thrones
+      song = 1;
+    }
+    if(song == 1 && !is_got_playing && !is_mario_playing) {
+       is_mario_playing = true;
+       playMelody(1, true);  // play super mario bros
+       song = 2;
+    }
+    if(song == 2 && !is_mario_playing && !is_lion_sleeps_tonight_playing) {
+      is_lion_sleeps_tonight_playing = true;
+      playMelody(2, true);  // play lion sleeps tonight
+      song = 3;
+    }
+    if(song == 3 && !is_lion_sleeps_tonight_playing && !is_take_on_me_playing) {
+      is_take_on_me_playing = true;
+      playMelody(3, true);  // play take on me
+      song = 4;
+    }
+    if(song == 4 && !is_take_on_me_playing && !is_never_gonna_give_playing) {
+       is_never_gonna_give_playing = true;
+       playMelody(4, true);  // play never gonna give
+       song = 0; //reset
+    }
+}
+
 // ************************
 // * Monitors Song Button Press or Coffee Container Button Press
 // ************************
 void monitorSongButton() {
   song_currentButton = debounceButton(song_lastButton, SONG_BUTTON);
-  if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 0 && !is_got_playing) {
-    is_got_playing = true;
-    turnLcdDisplayOn();
-    playMelody(0, true);
-    song = 1;
-  }
-  if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 1 && !is_got_playing && !is_mario_playing) {
-    is_mario_playing = true;
-    turnLcdDisplayOn();
-    playMelody(1, true);  // play super mario bros
-    song = 2;
-  }
-  if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 2 && !is_mario_playing && !is_lion_sleeps_tonight_playing) {
-    is_lion_sleeps_tonight_playing = true;
-    turnLcdDisplayOn();
-    playMelody(2, true);  // play lion sleeps tonight
-    song = 3;
-  }
-  if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 3 && !is_lion_sleeps_tonight_playing && !is_take_on_me_playing) {
-    is_take_on_me_playing = true;
-    turnLcdDisplayOn();
-    playMelody(3, true);  // play take on me
-    song = 4;
-  }
-  if(song_lastButton == LOW && song_currentButton == HIGH && !is_filling && is_stopped && song == 4 && !is_take_on_me_playing && !is_never_gonna_give_playing) {
-    is_never_gonna_give_playing = true;
-    turnLcdDisplayOn();
-    playMelody(4, true);  // play never gonna give
-    song = 0; //reset
-  }
-  if(song_lastButton == LOW && song_currentButton == HIGH && is_filling && !is_filling_coffee) {
-    // Fill Coffee Container
-    is_filling_coffee = true;
-    while(is_filling && !is_stopped && is_filling_coffee && ((millis() - fill_startTime) <= COFFEE_FILL_TIME)) {
-      showFillContainerPercentage("COFFEE-FILL", COFFEE_FILL_TIME);
-      
-      monitorStopButton(); 
+  if(song_lastButton == LOW && song_currentButton == HIGH) {
+    if(!is_filling && is_stopped) {
+      turnLcdDisplayOn();
+      playNextSong();
+      setLcdDisplayHeader();
     }
-    is_filling_coffee = false;
-    fill_startTime = AUTO_FILL_TIME;
+    if(is_filling && !is_filling_coffee) {
+      // Fill Coffee Container
+      is_filling_coffee = true;
+      while(is_filling && !is_stopped && is_filling_coffee && ((millis() - fill_startTime) <= COFFEE_FILL_TIME)) {
+        showFillContainerPercentage("COFFEE-FILL", COFFEE_FILL_TIME);
+        monitorStopButton(); 
+      }
+      is_filling_coffee = false;
+      fill_startTime = AUTO_FILL_TIME;
+    }
   }
   song_lastButton = song_currentButton;
 }
